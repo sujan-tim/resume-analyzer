@@ -9,7 +9,7 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
-import { use, useEffect } from "react";
+import { useEffect } from "react";
 import { usePuterStore } from "./lib/puter";
 
 export const links: Route.LinksFunction = () => [
@@ -30,6 +30,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     init()
   },[init]);
+  const { error } = usePuterStore();
+  useEffect(() => {
+    // Helpful for debugging Puter SDK load/auth issues in the browser console
+    // (prints SDK object and any error from the store)
+    // Open DevTools Console to see this output when reproducing the problem.
+    // Remove this logging when debugging is complete.
+    // eslint-disable-next-line no-console
+    console.log("window.puter:", (typeof window !== 'undefined' && (window as any).puter) || null);
+    if (error) {
+      // eslint-disable-next-line no-console
+      console.error("Puter store error:", error);
+    }
+  }, [error]);
   return (
     <html lang="en">
       <head>
@@ -41,6 +54,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body>
 
         <script src="https://js.puter.com/v2/"></script>
+        {error && (
+          <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50">
+            <div className="bg-red-100 border border-red-300 text-red-800 px-4 py-2 rounded">
+              <strong>Puter error:</strong> {error}
+            </div>
+          </div>
+        )}
  
         {children}
         <ScrollRestoration />

@@ -1,4 +1,5 @@
 interface FSItem {
+  length: number;
   id: string;
   uid: string;
   name: string;

@@ -9,7 +9,7 @@ export const meta = () => ([
     
 ])
 const Auth = () => {
-    const { isLoading, auth } = usePuterStore();
+    const { isLoading, auth, error } = usePuterStore();
     const location = useLocation(); 
     const next=location.search.split('next=')[1] ;
     const navigate=useNavigate();
@@ -17,10 +17,11 @@ const Auth = () => {
     
 
     useEffect(() => {
-        if(auth.isAuthenticated) navigate(next); {
-            // Redirect to dashboard or show authenticated content
+        if (auth.isAuthenticated) {
+            // If a next param exists, navigate to it; otherwise go to root
+            navigate(next ?? '/');
         }
-    }, [auth.isAuthenticated]);
+    }, [auth.isAuthenticated, next, navigate]);
 
   return (
 <main className="bg-[url('/images/bg-auth.svg')] bg-cover min-h-screen flex items-center justify-center">
@@ -50,6 +51,9 @@ const Auth = () => {
                         </button>
                     )}
                     </>
+                )}
+                {error && (
+                    <p className="text-red-600 mt-2">{error}</p>
                 )}
             </div>
         
